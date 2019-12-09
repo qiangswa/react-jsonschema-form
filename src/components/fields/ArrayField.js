@@ -216,7 +216,7 @@ class ArrayField extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const nextFormData = nextProps.formData;
+    const nextFormData = nextProps.formData || [];
     const previousKeyedFormData = prevState.keyedFormData;
     const newKeyedFormData =
       nextFormData.length === previousKeyedFormData.length
