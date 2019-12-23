@@ -21,6 +21,9 @@ import {
 } from "../../utils";
 import shortid from "shortid";
 
+const STATUS_FIELD = "{status}";
+const STATUS_NEW = "new";
+
 function ArrayFieldTitle({ TitleField, idSchema, title, required }) {
   if (!title) {
     return null;
@@ -263,13 +266,26 @@ class ArrayField extends Component {
   }
 
   _getNewFormDataRow = () => {
-    const { schema, registry = getDefaultRegistry() } = this.props;
+    const { schema, uiSchema, registry = getDefaultRegistry() } = this.props;
     const { definitions } = registry;
     let itemSchema = schema.items;
     if (isFixedItems(schema) && allowAdditionalItems(schema)) {
       itemSchema = schema.additionalItems;
     }
-    return getDefaultFormState(itemSchema, undefined, definitions);
+    let newFormDataRow = getDefaultFormState(
+      itemSchema,
+      undefined,
+      definitions
+    );
+    const { maxAddItems, initialOnAdd } = getUiOptions(uiSchema);
+    if (maxAddItems) {
+      newFormDataRow = { ...newFormDataRow, [STATUS_FIELD]: STATUS_NEW };
+    }
+    if (initialOnAdd) {
+      newFormDataRow = { ...newFormDataRow, ...initialOnAdd };
+    }
+
+    return newFormDataRow;
   };
 
   onAddClick = event => {
